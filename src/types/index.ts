@@ -25,6 +25,7 @@ export interface UserTokenInput {
 	decimals: number;
 	coinGeckoId: string;
 	nttType: "Launch" | "Extended";
+	networkType: "Testnet" | "Mainnet";
 	erc20Address?: string;
 	erc20Decimals?: number;
 }

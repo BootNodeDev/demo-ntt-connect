@@ -18,6 +18,7 @@ export const generateWormholeConfig = (
 		nttType,
 		erc20Address,
 		erc20Decimals,
+		networkType,
 	} = tokenInput;
 
 	const allChains = [sourceChain, ...destinationChains];
@@ -36,10 +37,8 @@ export const generateWormholeConfig = (
 		nttType === "Launch" && erc20Address ? erc20Address : tokenAddress;
 	const targetTokenAddress = tokenAddress;
 
-	console.log({ sourceTokenAddress, targetTokenAddress });
-
 	const config: WormholeConnectConfig = {
-		network: "Testnet",
+		network: networkType,
 		chains: allChains,
 		tokens: tokens,
 

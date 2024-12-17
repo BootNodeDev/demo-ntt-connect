@@ -20,14 +20,27 @@ export function TokenForm() {
 		nttType: "Launch",
 		erc20Address: "",
 		erc20Decimals: 18,
+		networkType: "Testnet",
 	});
 
-	const availableChains: Chain[] = [
+	const availableChainsTestnet: Chain[] = [
 		"Sepolia",
 		"BaseSepolia",
 		"ArbitrumSepolia",
 		"OptimismSepolia",
 	];
+
+	const availableChainsMainnet: Chain[] = [
+		"Ethereum",
+		"Base",
+		"Arbitrum",
+		"Optimism",
+	];
+
+	const availableChains =
+		tokenInput.networkType === "Testnet"
+			? availableChainsTestnet
+			: availableChainsMainnet;
 
 	useEffect(() => {
 		const queryParams = getQueryParams();
@@ -84,7 +97,19 @@ export function TokenForm() {
 		<form onSubmit={handleSubmit} className="token-form">
 			{/* NTT Configuration Section */}
 			<div className="form-section">
-				<h3>NTT Configuration</h3>
+				<div>
+					<label htmlFor="networkType">Network type</label>
+					<select
+						id="networkType"
+						name="networkType"
+						value={tokenInput.networkType}
+						onChange={handleInputChange}
+						required
+					>
+						<option value="Testnet">Testnet</option>
+						<option value="Mainnet">Mainnet</option>
+					</select>
+				</div>
 				<div>
 					<label htmlFor="nttType">NTT Type</label>
 					<select

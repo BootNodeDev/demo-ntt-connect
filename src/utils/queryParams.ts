@@ -35,7 +35,7 @@ export function getQueryParams(): Partial<UserTokenInput> {
 		const value = params.get(param);
 		if (value) {
 			const parsedValue = Number.parseInt(value, 10);
-			if (!isNaN(parsedValue)) {
+			if (!Number.isNaN(parsedValue)) {
 				queryParams[param] = parsedValue as UserTokenInput[typeof param];
 			}
 		}
@@ -70,6 +70,7 @@ export function buildQueryUrl(input: Partial<UserTokenInput>): string {
 
 	// Basic string params
 	const stringParams = [
+		"networkType",
 		"symbol",
 		"manager",
 		"token",

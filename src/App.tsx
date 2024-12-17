@@ -92,6 +92,7 @@ function App() {
 		const queryParams = getQueryParams();
 		const fullParams: UserTokenInput = {
 			nttType: "Launch",
+			networkType: "Testnet",
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			symbol: queryParams.symbol!,
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
