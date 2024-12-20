@@ -5,7 +5,7 @@ export function getQueryParams(): Partial<UserTokenInput> {
 	const params = new URLSearchParams(window.location.search);
 	const queryParams: Partial<UserTokenInput> = {};
 
-	// Basic string params (excluding nttType since it needs special handling)
+	// Basic string params
 	const stringParams = [
 		"symbol",
 		"manager",
@@ -19,11 +19,21 @@ export function getQueryParams(): Partial<UserTokenInput> {
 	for (const param of stringParams) {
 		const value = params.get(param);
 		if (value) {
-			queryParams[param] = value as UserTokenInput[typeof param];
+			queryParams[param] = value;
 		}
 	}
 
-	// Handle nttType separately with validation
+	// Handle networkType separately
+	const networkType = params.get("networkType");
+	if (
+		networkType === "Testnet" ||
+		networkType === "Mainnet" ||
+		networkType === "Devnet"
+	) {
+		queryParams.networkType = networkType;
+	}
+
+	// Handle nttType separately
 	const nttType = params.get("nttType");
 	if (nttType === "Launch" || nttType === "Extended") {
 		queryParams.nttType = nttType;
@@ -36,7 +46,7 @@ export function getQueryParams(): Partial<UserTokenInput> {
 		if (value) {
 			const parsedValue = Number.parseInt(value, 10);
 			if (!Number.isNaN(parsedValue)) {
-				queryParams[param] = parsedValue as UserTokenInput[typeof param];
+				queryParams[param] = parsedValue;
 			}
 		}
 	}
@@ -53,13 +63,7 @@ export function getQueryParams(): Partial<UserTokenInput> {
 		const chains = destinationChains.split(",").filter(Boolean);
 		if (chains.length > 0) {
 			queryParams.destinationChains = chains as Chain[];
-		} else {
-			// Provide default destination chain if none are specified
-			queryParams.destinationChains = ["BaseSepolia"] as Chain[];
 		}
-	} else {
-		// Ensure destinationChains is always an array
-		queryParams.destinationChains = ["BaseSepolia"] as Chain[];
 	}
 
 	return queryParams;
@@ -70,7 +74,6 @@ export function buildQueryUrl(input: Partial<UserTokenInput>): string {
 
 	// Basic string params
 	const stringParams = [
-		"networkType",
 		"symbol",
 		"manager",
 		"token",
@@ -78,17 +81,14 @@ export function buildQueryUrl(input: Partial<UserTokenInput>): string {
 		"iconUrl",
 		"coinGeckoId",
 		"erc20Address",
+		"networkType",
+		"nttType",
 	] as const;
 
 	for (const param of stringParams) {
 		if (input[param]) {
 			params.set(param, input[param] as string);
 		}
-	}
-
-	// Handle nttType
-	if (input.nttType) {
-		params.set("nttType", input.nttType);
 	}
 
 	// Number params

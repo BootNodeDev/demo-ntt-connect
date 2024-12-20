@@ -21,6 +21,7 @@ export const generateWormholeConfig = (
 		networkType,
 	} = tokenInput;
 
+	// Ensure chains are valid for the selected network
 	const allChains = [sourceChain, ...destinationChains];
 	const tokens = allChains.map((chain) => `${symbol}${chain}`);
 
@@ -28,11 +29,9 @@ export const generateWormholeConfig = (
 		throw new Error("ERC20 address is required for Extended NTT");
 	}
 
-	// Ensure decimals are always numbers
 	const sourceDecimals = erc20Decimals ?? 18;
 	const targetDecimals = decimals ?? 18;
 
-	// Determine token address based on NTT type
 	const sourceTokenAddress =
 		nttType === "Launch" && erc20Address ? erc20Address : tokenAddress;
 	const targetTokenAddress = tokenAddress;
@@ -41,7 +40,6 @@ export const generateWormholeConfig = (
 		network: networkType,
 		chains: allChains,
 		tokens: tokens,
-
 		ui: {
 			title: "Wormhole NTT UI",
 			defaultInputs: {

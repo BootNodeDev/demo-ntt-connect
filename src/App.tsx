@@ -91,8 +91,8 @@ function App() {
 	useEffect(() => {
 		const queryParams = getQueryParams();
 		const fullParams: UserTokenInput = {
-			nttType: "Launch",
-			networkType: "Testnet",
+			nttType: queryParams.nttType || "Launch",
+			networkType: queryParams.networkType || "Testnet",
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			symbol: queryParams.symbol!,
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -135,6 +135,8 @@ function App() {
 		const newConfig = generateWormholeConfig(tokenInput);
 		setConfig(newConfig);
 	};
+
+	console.log({ config });
 
 	return (
 		<div className="container">

@@ -1,5 +1,24 @@
 import type { Chain } from "@wormhole-foundation/wormhole-connect";
 
+// Definimos el tipo de red que acepta Wormhole Connect
+export type NetworkType = "Testnet" | "Mainnet" | "Devnet";
+export type NttType = "Launch" | "Extended";
+// Definimos las chains exactamente como las espera Wormhole Connect
+export const TESTNET_CHAINS = [
+	"Sepolia",
+	"BaseSepolia",
+	"ArbitrumSepolia",
+	"OptimismSepolia",
+] as const;
+
+export const MAINNET_CHAINS = [
+	"Ethereum",
+	"Base",
+	"Arbitrum",
+	"Optimism",
+] as const;
+
+// Usamos Chain directamente del SDK de Wormhole
 export interface TokenConfig {
 	key: string;
 	symbol: string;
@@ -25,7 +44,7 @@ export interface UserTokenInput {
 	decimals: number;
 	coinGeckoId: string;
 	nttType: "Launch" | "Extended";
-	networkType: "Testnet" | "Mainnet";
+	networkType: NetworkType;
 	erc20Address?: string;
 	erc20Decimals?: number;
 }

@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
 import type { Chain } from "@wormhole-foundation/wormhole-connect";
-import type { UserTokenInput } from "../types";
+import type { NetworkType, UserTokenInput } from "../types";
+import { TESTNET_CHAINS, MAINNET_CHAINS } from "../types";
 import {
 	getQueryParams,
 	submitFormWithQueryParams,
 } from "../utils/queryParams";
 
 export function TokenForm() {
+	const getDefaultChains = (networkType: NetworkType): Chain[] => {
+		return networkType === "Testnet"
+			? (["Sepolia", "BaseSepolia"] as Chain[])
+			: (["Ethereum", "Base"] as Chain[]);
+	};
+
 	const [tokenInput, setTokenInput] = useState<UserTokenInput>({
 		symbol: "",
 		manager: "",
 		token: "",
 		transceiver: "",
-		sourceChain: "Sepolia",
-		destinationChains: ["BaseSepolia"],
+		sourceChain: "Sepolia" as Chain,
+		destinationChains: ["BaseSepolia"] as Chain[],
 		iconUrl: "https://wormhole.com/token.png",
 		decimals: 18,
 		coinGeckoId: "wormhole",
@@ -23,31 +30,24 @@ export function TokenForm() {
 		networkType: "Testnet",
 	});
 
-	const availableChainsTestnet: Chain[] = [
-		"Sepolia",
-		"BaseSepolia",
-		"ArbitrumSepolia",
-		"OptimismSepolia",
-	];
-
-	const availableChainsMainnet: Chain[] = [
-		"Ethereum",
-		"Base",
-		"Arbitrum",
-		"Optimism",
-	];
-
 	const availableChains =
 		tokenInput.networkType === "Testnet"
-			? availableChainsTestnet
-			: availableChainsMainnet;
+			? (TESTNET_CHAINS as unknown as Chain[])
+			: (MAINNET_CHAINS as unknown as Chain[]);
 
 	useEffect(() => {
 		const queryParams = getQueryParams();
 		if (Object.keys(queryParams).length > 0) {
+			const networkType = queryParams.networkType || "Testnet";
+			const [defaultSource, defaultDestination] = getDefaultChains(networkType);
+
 			setTokenInput((prev) => ({
 				...prev,
 				...queryParams,
+				sourceChain: queryParams.sourceChain || defaultSource,
+				destinationChains: queryParams.destinationChains || [
+					defaultDestination,
+				],
 			}));
 		}
 	}, []);
@@ -64,10 +64,29 @@ export function TokenForm() {
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		const { name, value } = e.target;
-		setTokenInput((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+
+		if (name === "networkType") {
+			const newNetworkType = value as NetworkType;
+			const [defaultSource, defaultDestination] =
+				getDefaultChains(newNetworkType);
+
+			setTokenInput((prev) => ({
+				...prev,
+				networkType: newNetworkType,
+				sourceChain: defaultSource,
+				destinationChains: [defaultDestination],
+			}));
+		} else if (name === "sourceChain") {
+			setTokenInput((prev) => ({
+				...prev,
+				sourceChain: value as Chain,
+			}));
+		} else {
+			setTokenInput((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+		}
 	};
 
 	const handleAddDestinationChain = () => {
@@ -108,6 +127,7 @@ export function TokenForm() {
 					>
 						<option value="Testnet">Testnet</option>
 						<option value="Mainnet">Mainnet</option>
+						<option value="Devnet">Devnet</option>
 					</select>
 				</div>
 				<div>
